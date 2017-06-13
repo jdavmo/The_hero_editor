@@ -46,7 +46,7 @@ import { HEROES } from './mock-heroes';
       color: #039be5;
     }
   `]
-  ]
+  
 })
 
 export class AppComponent {
