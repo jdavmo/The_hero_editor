@@ -76,7 +76,7 @@ import { HEROES } from './mock-heroes';
 
 export class AppComponent implements OnInit{
 	title = 'Tour of Heroes';
-  	heroes = [];
+  	heroes = {};
   	selectedHero: Hero;
 
   	onSelect(hero: Hero): void {
