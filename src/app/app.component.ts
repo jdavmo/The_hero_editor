@@ -76,7 +76,7 @@ import { HEROES } from './mock-heroes';
 
 export class AppComponent implements OnInit{
 	title = 'Tour of Heroes';
-  	heroes = {};
+  	heroes: Hero[];
   	selectedHero: Hero;
 
   	onSelect(hero: Hero): void {
@@ -86,7 +86,7 @@ export class AppComponent implements OnInit{
 	constructor(private heroService: HeroService) { }
 
 	getHeroes(): void {
-		this.heroes = this.heroService.getHeroes();
+		this.heroService.getHeroesSlowly().then(heroes => this.heroes = heroes);
 	}
 
 	ngOnInit(): void {
