@@ -31,6 +31,10 @@ AppModule = __decorate([
                     pathMatch: 'full'
                 },
                 {
+                    path: 'detail/:id',
+                    component: hero_detail_component_1.HeroDetailComponent
+                },
+                {
                     path: 'dashboard',
                     component: dashboard_component_1.DashboardComponent
                 },
