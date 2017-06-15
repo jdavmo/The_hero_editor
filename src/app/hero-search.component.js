@@ -25,20 +25,29 @@ var HeroSearchComponent = (function () {
         this.router = router;
         this.searchTerms = new Subject_1.Subject();
     }
-    // Push a search term into the observable stream.
+    //netx() pone una cadena en el flujo del observable
     HeroSearchComponent.prototype.search = function (term) {
         this.searchTerms.next(term);
+        console.log(term);
+        console.log("Observable");
+        console.log(this.searchTerms);
+    };
+    HeroSearchComponent.prototype.test = function (term) {
+        console.log("En el switchMap");
+        console.log(term);
+        return term
+            ? this.heroSearchService.search(term)
+            : Observable_1.Observable.of([]);
     };
     HeroSearchComponent.prototype.ngOnInit = function () {
         var _this = this;
+        //Aqui lo que ago es asignar el Subject searchTerms que es un observable a Heroes 
+        //y le agrego propiedades
         this.heroes = this.searchTerms
-            .debounceTime(300) // wait 300ms after each keystroke before considering the term
-            .distinctUntilChanged() // ignore if next search term is same as previous
-            .switchMap(function (term) { return term // switch to new observable each time the term changes
-            ? _this.heroSearchService.search(term)
-            : Observable_1.Observable.of([]); })
+            .debounceTime(300) //Espere 300 ms después de cada pulsación antes de considerar el término    
+            .distinctUntilChanged() //No volver a consultar si no hay cambios en la consulta
+            .switchMap(function (term) { return _this.test(term); })
             .catch(function (error) {
-            // TODO: add real error handling
             console.log(error);
             return Observable_1.Observable.of([]);
         });

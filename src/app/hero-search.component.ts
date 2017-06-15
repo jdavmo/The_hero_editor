@@ -30,24 +30,42 @@
         private heroSearchService: HeroSearchService,
         private router: Router) {}
      
-      
+      //netx() pone una cadena en el flujo del observable
       search(term: string): void {
         this.searchTerms.next(term);
+        console.log(term);
+        console.log("Observable");
+        console.log(this.searchTerms);
+      }
+
+      test(term: any){
+            console.log("En el switchMap");
+            console.log(term);
+            return term  
+            //condicional devuelve la búsqueda HTTP observable 
+            ? this.heroSearchService.search(term)
+
+            //o el observable de los héroes vacíos si no había término de búsqueda
+            : Observable.of<Hero[]>([])
       }
      
       ngOnInit(): void {
+        //Aqui lo que ago es asignar el Subject searchTerms que es un observable a Heroes 
+        //y le agrego propiedades
         this.heroes = this.searchTerms
-          .debounceTime(300)        
-          .distinctUntilChanged()   
-          .switchMap(term => term   
-            ? this.heroSearchService.search(term)
-            : Observable.of<Hero[]>([]))
+          .debounceTime(300)    //Espere 300 ms después de cada pulsación antes de considerar el término    
+          .distinctUntilChanged()  //No volver a consultar si no hay cambios en la consulta
+          .switchMap(term => this.test(term))
           .catch(error => {
             console.log(error);
             return Observable.of<Hero[]>([]);
           });
+
+
       }
-     
+       
+
+
       gotoDetail(hero: Hero): void {
         let link = ['/detail', hero.id];
         this.router.navigate(link);
