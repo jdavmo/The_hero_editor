@@ -14,6 +14,7 @@ require("rxjs/add/operator/toPromise");
 var HeroService = (function () {
     function HeroService(http) {
         this.http = http;
+        this.headers = new http_1.Headers({ 'Content-Type': 'application/json' });
         this.heroesUrl = 'api/heroes'; // URL para la api web
     }
     //http.get es un observable, el .toPromise lo convierte en una promesa, RxJS amplia los operadores del observable
