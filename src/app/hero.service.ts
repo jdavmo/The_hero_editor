@@ -9,14 +9,79 @@ import { HEROES } from './mock-heroes';
 
 @Injectable()
 export class HeroService {
+	constructor(private http: Http) { }
+
+	private moviesUrl = 'api.themoviedb.org/';
+	private movieImages = 'image.tmdb.org/t/p/w500';
+	private apiKey = '802cd9bec58e75474a66bfa717fd1106';
+
+	_normalizeEndpoint(version: string): any {
+	    return {'url':  this.moviesUrl + version,
+	            'apiKey': this.apiKey};
+	}
+
+
+	Discover(): any {
+        var serviceVersion = "3";
+        var serviceBase    = this._normalizeEndpoint( serviceVersion);
+
+        console.log(serviceBase);
+
+        /* http://docs.themoviedb.apiary.io/reference/discover/discovermovie */
+        var movieList = function ( sortBy, page, includeAdult ) {
+            if ( sortBy === undefined ) {
+                sortBy = 'popularity.desc';
+            }
+            if ( page === undefined ) {
+                page = 1;
+            }
+            if ( includeAdult === undefined ) {
+                includeAdult = 'false';
+            }
+            var uri = serviceBase.url + '/discover/movie?page=' + page + '&include_adult=' + includeAdult + '&sort_by=' + sortBy + '&api_key=' + serviceBase.apiKey;
+            return this.http.get( "//api.themoviedb.org/3/discover/movie?page=1&include_adult=false&sort_by=popularity.desc&api_key=802cd9bec58e75474a66bfa717fd1106" );
+        };
+
+        /* http://docs.themoviedb.apiary.io/reference/discover/discovertv */
+        var televisionList = function ( sortBy, page ) {
+            if ( sortBy === undefined ) {
+                sortBy = 'popularity.desc';
+            }
+            if ( page === undefined ) {
+                page = 1;
+            }
+            var uri = serviceBase.url + '/discover/tv?page=' + page + '&sort_by=' + sortBy + '&api_key=' + serviceBase.apiKey;
+            return this.http.get( uri );
+        };
+
+        return {
+            discover: {
+                movies: movieList,
+                tv: televisionList
+            }
+        };
+     
+    }
+
+
 	private headers = new Headers({'Content-Type': 'application/json'});
     private heroesUrl = 'api/heroes';  // URL para la api web
+
      
-    constructor(private http: Http) { }
+    
     
     //http.get es un observable, el .toPromise lo convierte en una promesa, RxJS amplia los operadores del observable
     getHeroes(): Promise<Hero[]> {
-    	console.log("Hola");
+    	
+    	var list = [];
+    	
+    	console.log("Prueba Servicio Movie List");
+
+    	this.http.get('http://api.themoviedb.org/3/discover/movie%3Fpage=1&include_adult=false&sort_by=popularity.desc&api_key=802cd9bec58e75474a66bfa717fd1106')
+    	.toPromise()
+    	.then(response => response.json().data as list[]).catch(this.handleError);
+
+    	console.log("list: "list);
 
 		return this.http.get(this.heroesUrl)
 		         .toPromise()
@@ -24,6 +89,7 @@ export class HeroService {
 		         .catch(this.handleError);
 
     }
+
      
     private handleError(error: any): Promise<any> {
       console.error('An error occurred', error); 
